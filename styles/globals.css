@@ -1,0 +1,486 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+  Global design tokens (mapped to Tailwind theme via CSS variables)
+  Colors from TASK:
+  - Primary: #6D5DF6 (Electric Violet)
+  - Secondary: #0AE2FF (Cyan Neon)
+  - Accent: #F54DFF (Magenta)
+  - Background: ultra-dark gradient
+  - Surface: soft glassmorphism blur panels
+*/
+
+:root {
+  /* Softer, more eye-friendly dark theme */
+  --background: 222 47% 7%;
+  --foreground: 210 40% 96%;
+
+  --muted: 220 35% 13%;
+  --muted-foreground: 215 20% 72%;
+
+  --border: 220 30% 22%;
+  --input: 220 30% 22%;
+  --ring: 239 84% 67%;
+
+  --card: 222 45% 9%;
+  --card-foreground: 210 40% 96%;
+
+  --popover: 222 47% 8%;
+  --popover-foreground: 210 40% 96%;
+
+  /* Brand colors as HSL for flexibility if needed later */
+  --brand-primary: 239 84% 67%; /* #6366F1 (softer indigo) */
+  --brand-secondary: 189 92% 56%; /* #22D3EE (teal-cyan) */
+  --brand-accent: 334 84% 72%; /* #F472B6 (soft magenta) */
+
+  /* Radii */
+  --radius-lg: 1.1rem;
+  --radius-md: 0.8rem;
+  --radius-sm: 0.6rem;
+
+  /* Fonts (set via next/font in layout, referenced here) */
+  --font-heading: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont,
+    "SF Pro Text", "SF Pro Display", sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "SF Pro Text", "SF Pro Display", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--font-sans);
+  /* Prevent horizontal scroll from decorative overflow */
+  overflow-x: hidden;
+  /* Softer, more diffuse background glows */
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.14), transparent 55%),
+    radial-gradient(circle at top right, rgba(244, 114, 182, 0.12), transparent 60%),
+    #020617;
+  color: hsl(var(--foreground));
+}
+
+/* Scrollbars – subtle and on-brand */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.7) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(99, 102, 241, 0.7),
+    rgba(34, 211, 238, 0.7)
+  );
+  border-radius: 999px;
+}
+
+/* Generic layout helpers */
+
+.app-shell {
+  @apply min-h-screen flex flex-col;
+}
+
+.app-main {
+  @apply flex-1 flex flex-col;
+}
+
+.app-container {
+  @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Glassmorphism panels */
+.glass-panel {
+  background: radial-gradient(
+      circle at top left,
+      rgba(99, 102, 241, 0.14),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(34, 211, 238, 0.12),
+      transparent 55%
+    ),
+    rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(22px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  box-shadow:
+    0 18px 60px rgba(15, 23, 42, 0.9),
+    0 0 26px rgba(15, 23, 42, 0.9);
+}
+
+/* Section spacing */
+.section {
+  @apply py-16 sm:py-20 lg:py-24;
+}
+
+.section-header {
+  @apply flex flex-col gap-3 text-center max-w-2xl mx-auto mb-10;
+}
+
+.section-eyebrow {
+  @apply inline-flex items-center justify-center rounded-pill border border-primary/40 bg-primary/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-primary/80;
+}
+
+.section-title {
+  @apply text-3xl sm:text-4xl lg:text-5xl font-semibold font-heading tracking-tight;
+}
+
+.section-description {
+  @apply text-sm sm:text-base text-muted-foreground;
+}
+
+/* Subtle animated accent lines for section headers */
+.section-underline {
+  position: relative;
+  height: 1px;
+  width: 80px;
+  margin: 0.75rem auto 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(109, 93, 246, 0.9),
+    rgba(10, 226, 255, 0.9),
+    transparent
+  );
+  overflow: hidden;
+}
+
+.section-underline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(245, 77, 255, 0.9),
+    transparent
+  );
+  animation: line-sweep 2.6s linear infinite;
+}
+
+/* Buttons – base styles; shadcn-like */
+.btn {
+  @apply inline-flex items-center justify-center rounded-pill px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary/80 focus-visible:ring-offset-slate-900;
+}
+
+.btn-primary {
+  @apply btn bg-primary text-primary-foreground shadow-glow-primary hover:shadow-[0_0_40px_rgba(109,93,246,0.8)] hover:bg-primary/90;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 0% 0%,
+    rgba(255, 255, 255, 0.18),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.btn-primary:hover::before {
+  opacity: 1;
+}
+
+.btn-secondary {
+  @apply btn border border-primary/30 bg-slate-900/40 text-slate-100 hover:border-secondary/60 hover:bg-slate-900/80 hover:text-sky-100;
+}
+
+/* Floating template cards */
+.card-floating {
+  @apply glass-panel relative overflow-hidden;
+  animation: float-soft 7s ease-in-out infinite;
+}
+
+/* Small utility for numeric / code text */
+.numeric {
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+}
+
+/* Hero specific background helper */
+.hero-bg {
+  background-image: radial-gradient(
+      circle at top left,
+      rgba(99, 102, 241, 0.26),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(34, 211, 238, 0.2),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at center,
+      rgba(15, 23, 42, 0.96),
+      rgba(15, 23, 42, 0.99)
+    );
+}
+
+/* Keyframes (mirrored from tailwind.config for non-utility usage) */
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes line-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Layout + landing-page overrides
+   These ensure the page looks like a polished landing page even if
+   utility classes aren't processed by Tailwind.
+-------------------------------------------------------------------*/
+
+/* App shell and main content layout */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Shared container for sections/header */
+.app-container {
+  width: 100%;
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Section vertical spacing */
+.section {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 640px) {
+  .section {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+/* Section header styling */
+.section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: center;
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2.75rem;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-size: clamp(2.25rem, 3vw, 3rem);
+}
+
+.section-description {
+  font-size: 0.95rem;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Header: make it feel like a real nav bar */
+header.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid rgba(30, 64, 175, 0.55);
+  background: rgba(2, 6, 23, 0.9);
+  backdrop-filter: blur(20px);
+}
+
+header.sticky .app-container {
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+/* Desktop nav */
+@media (min-width: 768px) {
+  header.sticky nav {
+    display: flex;
+    align-items: center;
+    gap: 2.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  header.sticky nav a {
+    text-decoration: none;
+    color: rgba(203, 213, 225, 0.95);
+    position: relative;
+  }
+
+  header.sticky nav a:hover {
+    color: #f9fafb;
+  }
+}
+
+/* Hero layout: text + visual split */
+#hero .app-container {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  #hero .app-container {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+}
+
+#hero h1 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+#hero p {
+  max-width: 34rem;
+  font-size: 0.95rem;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Hero CTA row */
+#hero .hero-cta-row,
+#hero .hero-cta-row-alt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  #hero .hero-cta-row,
+  #hero .hero-cta-row-alt {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Simple button baseline so CTAs look like real buttons
+   even if Tailwind button styles fail */
+button,
+[role="button"] {
+  font-family: var(--font-sans);
+}
+
+button.primary-cta,
+button.secondary-cta {
+  border-radius: 999px;
+  padding: 0.75rem 1.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+button.primary-cta {
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  color: #020617;
+  box-shadow: 0 0 26px rgba(99, 102, 241, 0.6);
+}
+
+button.secondary-cta {
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+}
+
+button.primary-cta:hover {
+  filter: brightness(1.05);
+}
+
+button.secondary-cta:hover {
+  background: rgba(15, 23, 42, 0.98);
+}
+
+/* Bullet list refinement under hero */
+#hero ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+#hero ul li {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.65);
+}

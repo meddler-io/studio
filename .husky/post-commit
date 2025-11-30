@@ -1,0 +1,31 @@
+#!/usr/bin/env sh
+
+# Avoid recursion when the commit itself is the auto-changelog commit
+last_subject="$(git log -1 --pretty=%s 2>/dev/null || echo "")"
+case "$last_subject" in
+  *"update changelog"*)
+    exit 0
+    ;;
+esac
+
+# Update CHANGELOG.md based on the last commit
+node scripts/update-changelog.mjs
+
+# Optional: automatically commit CHANGELOG and push
+# Enable by exporting AUTO_PUSH_AFTER_COMMIT=1 in your shell or CI.
+if [ -n "$AUTO_PUSH_AFTER_COMMIT" ]; then
+  # If CHANGELOG.md did not change, nothing to do
+  if git diff --quiet -- CHANGELOG.md; then
+    exit 0
+  fi
+
+  git add CHANGELOG.md
+
+  short_sha="$(git rev-parse --short HEAD 2>/dev/null || echo "")"
+  git commit -m "docs: update changelog for ${short_sha}"
+
+  current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")"
+  if [ -n "$current_branch" ]; then
+    git push origin "$current_branch"
+  fi
+fi

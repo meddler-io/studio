@@ -1,0 +1,80 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build and create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Archive production build
+        run: |
+          mkdir -p dist
+          tar -czf dist/social-flow-landing-page_build_${{ github.sha }}.tar.gz \
+            .next \
+            package.json \
+            package-lock.json
+        # If you want to include other assets (e.g. public/), add them above
+
+      - name: Upload build artifact (for workflow use)
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-flow-landing-page_build_${{ github.sha }}
+          path: dist/social-flow-landing-page_build_${{ github.sha }}.tar.gz
+          if-no-files-found: error
+
+      # Auto versioning based on existing tags: v0.1.0, v0.1.1, etc.
+      # This does NOT modify package.json, it manages git tags.
+      - name: Bump version tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Bump strategy: patch | minor | major
+          # You can also configure this via commit messages and 'custom_release_rules'
+          default_bump: patch
+          # Tags will look like: v0.1.1, v0.1.2, etc.
+
+      - name: Create GitHub Release with build artifact
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: |
+            Auto-generated release for commit ${{ github.sha }}.
+
+            Changes:
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref_name }}
+
+            This release contains a production build of the Next.js app.
+          files: |
+            dist/social-flow-landing-page_build_${{ github.sha }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

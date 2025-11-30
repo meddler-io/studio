@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+# Auto-generate commit message from staged diff if user did not provide one
+# Git passes the commit message file path as $1
+node scripts/generate-commit-message.mjs "$1"
