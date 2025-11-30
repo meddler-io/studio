@@ -403,7 +403,7 @@ export function HeroSection() {
             variants={staggeredVariants}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.2rem] xl:text-[3.6rem] font-semibold font-heading tracking-tight leading-tight"
           >
-            Turn raw footage into{" "}
+            Turn raw footages into{" "}
             <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
               channel-ready videos
             </span>{" "}

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky install",
-    "deploy": "npm run build && wrangler pages deploy ./out --project-name=meddler-studio --commit-dirty=true"
+    "deploy": "npm run build && cp public/_headers out/_headers && wrangler pages deploy ./out --project-name=meddler-studio --commit-dirty=true"
   },
   "dependencies": {
     "clsx": "^2.1.1",
