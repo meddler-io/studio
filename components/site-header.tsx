@@ -63,10 +63,11 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-800/70 bg-slate-950/80 backdrop-blur-2xl shadow-[0_12px_40px_rgba(15,23,42,0.9)]">
+    <header className="sticky top-0 z-30 border-b border-slate-800/70 bg-slate-950 shadow-[0_12px_40px_rgba(15,23,42,0.9)]">
       <div className="app-container flex h-14 sm:h-16 items-center justify-between gap-3">
         <LogoMark />
 
+        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-medium">
           {NAV_LINKS.map((link) => (
             <a
@@ -92,6 +93,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
+        {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3">
           <Button
             variant="secondary"
@@ -112,6 +114,7 @@ export function SiteHeader() {
           </Button>
         </div>
 
+        {/* Mobile menu toggle */}
         <button
           type="button"
           className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-700/70 bg-slate-900/70 text-slate-200 hover:border-primary/60 hover:text-white transition-all"
@@ -126,44 +129,69 @@ export function SiteHeader() {
         </button>
       </div>
 
-      {isOpen ? (
-        <div className="md:hidden border-t border-slate-800/70 bg-slate-950">
-          <div className="app-container py-3 flex flex-col gap-3">
-            <nav className="flex flex-col gap-1.5 text-sm text-slate-200">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "flex items-center justify-between rounded-lg px-3 py-2 hover:bg-slate-900/80",
-                    activeSection === link.href &&
-                      "bg-slate-900/90 border border-primary/40"
-                  )}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span>{link.label}</span>
-                  <ArrowRight className="h-3.5 w-3.5 text-slate-500" />
-                </a>
-              ))}
-            </nav>
-            <div className="mt-2 flex flex-col gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                fullWidth
-                className="gap-1.5"
+      {/* Mobile nav: full-screen solid menu overlay */}
+      {isOpen && (
+        <div className="md:hidden fixed inset-0 z-40 nav-overlay-bg">
+          <div className="flex flex-col min-h-screen nav-overlay-bg">
+            {/* Overlay header (logo + close) */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800/70">
+              <LogoMark />
+              <button
+                type="button"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-700/70 bg-slate-900/80 text-slate-200 hover:border-primary/60 hover:text-white transition-all"
+                aria-label="Close navigation"
+                onClick={() => setIsOpen(false)}
               >
-                <Play className="h-3.5 w-3.5" />
-                <span className="whitespace-nowrap">{SITE.secondaryCTA}</span>
-              </Button>
-              <Button size="sm" fullWidth className="gap-1.5">
-                <span className="whitespace-nowrap">{SITE.primaryCTA}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Nav links from top, scrollable if needed */}
+            <div className="flex-1 overflow-y-auto px-4 py-4">
+              <nav className="flex flex-col gap-2 text-sm text-slate-200">
+                {NAV_LINKS.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "flex items-center justify-between rounded-lg px-3 py-2 bg-slate-900 hover:bg-slate-800",
+                      activeSection === link.href &&
+                        "border border-primary/40 shadow-[0_0_16px_rgba(94,234,212,0.4)]"
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span>{link.label}</span>
+                    <ArrowRight className="h-3.5 w-3.5 text-slate-500" />
+                  </a>
+                ))}
+              </nav>
+            </div>
+
+            {/* CTAs pinned to bottom */}
+            <div className="border-t border-slate-800/70 px-4 py-3">
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  fullWidth
+                  className="gap-1.5"
+                >
+                  <Play className="h-3.5 w-3.5" />
+                  <span className="whitespace-nowrap">
+                    {SITE.secondaryCTA}
+                  </span>
+                </Button>
+                <Button size="sm" fullWidth className="gap-1.5">
+                  <span className="whitespace-nowrap">
+                    {SITE.primaryCTA}
+                  </span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      ) : null}
+      )}
     </header>
   );
 }

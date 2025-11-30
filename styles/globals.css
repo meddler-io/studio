@@ -247,6 +247,15 @@ body {
     );
 }
 
+/* Mobile nav overlay background using theme colors */
+.nav-overlay-bg {
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.14), transparent 55%),
+    radial-gradient(circle at top right, rgba(244, 114, 182, 0.12), transparent 60%),
+    #020617;
+}
+
 /* Keyframes (mirrored from tailwind.config for non-utility usage) */
 
 @keyframes float-soft {
