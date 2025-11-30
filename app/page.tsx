@@ -16,9 +16,9 @@ export default function Page() {
       <SiteHeader />
       <div className="app-page space-y-20 md:space-y-24 lg:space-y-28">
         <HeroSection />
+        <TemplateGallerySection />
         <HowItWorksSection />
         <FeaturesSection />
-        <TemplateGallerySection />
         <ComparisonSection />
         <DemoSection />
         <UseCasesSection />

@@ -340,7 +340,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: "pro",
     name: "Pro",
-    price: "$39",
+    price: "$299",
     cadence: "/mo",
     tagline: "For solo creators shipping content every week.",
     highlighted: true,
@@ -357,7 +357,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: "business",
     name: "Business",
-    price: "$129",
+    price: "$499",
     cadence: "/mo",
     tagline: "For teams, agencies and production studios.",
     ctaLabel: "Talk to sales",

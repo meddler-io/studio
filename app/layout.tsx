@@ -41,6 +41,17 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Meddler Studio",
+  applicationCategory: "VideoEditingSoftware",
+  description:
+    "AI video automation that turns raw footage into channel-ready clips for YouTube, TikTok, Reels, Shorts, and LinkedIn.",
+  operatingSystem: "Web",
+  url: "https://studio.meddler.io",
+};
+
 type RootLayoutProps = {
   children: React.ReactNode;
 };
@@ -56,6 +67,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           jetBrainsMono.variable
         )}
       >
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <main className="app-main">{children}</main>
       </body>
     </html>

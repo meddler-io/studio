@@ -13,3 +13,6 @@
 ## 2025-11-30
 - major timeline stablity (af36030)
 
+## 2025-11-30
+- SEO friendly (aec92de)
+
